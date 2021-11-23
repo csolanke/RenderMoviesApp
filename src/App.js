@@ -1,35 +1,39 @@
 import logo from './logo.svg';
-import React from 'react';
+import React, {useState} from 'react';
+
 import MoviesList from './components/MoviesList';
 import './App.css';
 
 function App() {
 
-  const dummyMovies =[
-    {
-      id:1,
-      title:'Shershah',
-      openingText: 'This is patriotic movie which is biopic of sheeshah friend of Shahid Bhagat singh',
-      releaseDate: '2021-10-18',
-    },
-    {
-      id :2,
-      title : 'Bhag Milkha Bhag',
-      openingText :'Biopic of the great Milkha Singh',
-      releaseDate:'2012-05-29',
+const [movies, setMovies] = useState([]);
 
-    },
-  ];
+  async function fetchMoviesHandler()
+  {
+    const response = await  fetch('https://swapi.dev/api/films/');
+    const data = await response.json();
 
+    const transformedMovies = data.results.map((movieData)=>{
+      return {
+        id : movieData.episode_id,
+        title : movieData.title,
+        openingText : movieData.opening_crawl,
+        releaseDate : movieData.release_date,
+      };
+    });
+
+    setMovies(transformedMovies);
+     
+  }
 
   return (
   <React.Fragment>
    <section>
-      <button>Fetch Movies</button>
+      <button onClick={fetchMoviesHandler}>Fetch Movies</button>
    </section>
     
     <section>
-      <MoviesList movies ={dummyMovies}/>
+      <MoviesList movies ={movies}/>
     </section>
   </React.Fragment>
   );
